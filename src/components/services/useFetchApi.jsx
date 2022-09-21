@@ -18,7 +18,7 @@ function useFetchApi() {
     getPlanets();
   }, []);
 
-  return { planetList };
+  return { planetList, setPlanetList };
 }
 
 export default useFetchApi;
