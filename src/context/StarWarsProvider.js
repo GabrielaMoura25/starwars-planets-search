@@ -4,40 +4,37 @@ import StarWarsContext from './StarWarsContext';
 import useFetchApi from '../components/services/useFetchApi';
 
 function StarWarsProvider({ children }) {
-  const { planetList, getPlanets, setPlanetList } = useFetchApi();
-  const [filterByName, setFilterByName] = useState('');
-  const [column, setColumn] = useState('population');
-  const [comparison, setComparison] = useState('maior que');
-  const [valueF, setValueF] = useState(0);
-  const [filterByNumericValues, setFilterByNumericValues] = useState([]);
+  const { planetList, getPlanets, setPlanetList, planetListOrigin } = useFetchApi();
 
-  const concatFilters = () => {
-    setFilterByNumericValues(
-      filterByNumericValues.concat({
-        column,
-        comparison,
-        value: valueF,
-      }),
-    );
-  };
+  const [filterByName, setFilterByName] = useState('');
+  const [columnSelect, setColumnSelect] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
+  const [comparisonSelect, setComparisonSelect] = useState('maior que');
+  const [values, setValues] = useState(0);
+  const [filterByNumericValues, setFilterByNumericValues] = useState({
+    column: columnSelect[0],
+    comparison: 'maior que',
+    valueF: 0,
+  });
+  const [concatFilters, setConcatFilters] = useState([]);
 
   const filteredPlanetName = filterByName.length > 0 ? planetList
-    .filter((planet) => planet.name.includes(filterByName)) : planetList;
+    .filter((planet) => (planet.name).toLowerCase()
+      .includes(filterByName.toLowerCase())) : planetList;
 
   const handleChangeName = ({ target: { value } }) => {
     setFilterByName(value);
   };
 
-  const handleChangeColumn = ({ target: { value } }) => {
-    setColumn(value);
-  };
-
-  const handleChangeComparison = ({ target: { value } }) => {
-    setComparison(value);
-  };
-
-  const handleChangeValue = ({ target: { value } }) => {
-    setValueF(value);
+  const handleChangeAll = ({ target: { value, name } }) => {
+    setFilterByNumericValues({
+      ...filterByNumericValues,
+      [name]: value });
   };
 
   const context = {
@@ -49,14 +46,17 @@ function StarWarsProvider({ children }) {
     filteredPlanetName,
     handleChangeName,
     concatFilters,
-    column,
-    handleChangeColumn,
-    comparison,
-    handleChangeComparison,
-    valueF,
-    handleChangeValue,
+    columnSelect,
+    setColumnSelect,
+    comparisonSelect,
+    setComparisonSelect,
+    values,
+    setValues,
     filterByNumericValues,
     setFilterByNumericValues,
+    setConcatFilters,
+    handleChangeAll,
+    planetListOrigin,
   };
 
   return (

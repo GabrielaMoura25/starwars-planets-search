@@ -1,37 +1,61 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 
 function Filter() {
-  const { filterByName, handleChangeName, handleChangeValue,
-    handleChangeComparison, handleChangeColumn,
-    planetList, setPlanetList, column, comparison, valueF } = useContext(StarWarsContext);
-  // console.log(filterByName);
+  const {
+    filterByName,
+    handleChangeName,
+    handleChangeAll,
+    setPlanetList,
+    columnSelect,
+    planetListOrigin,
+    filterByNumericValues,
+    setFilterByNumericValues,
+    setColumnSelect,
+    concatFilters,
+    setConcatFilters } = useContext(StarWarsContext);
 
-  const options = [
-    'population',
-    'orbital_period',
-    'diameter',
-    'rotation_period',
-    'surface_water',
-  ];
-
-  const filterConcat = (planeta, coluna, compar, values) => {
-    switch (compar) {
-    case 'maior que':
-      return planeta.filter((planet) => Number(planet[coluna]) > Number(values));
-    case 'menor que':
-      return planeta.filter((planet) => Number(planet[coluna]) < Number(values));
-    case 'igual a':
-      return planeta.filter((planet) => Number(planet[coluna]) === Number(values));
-    default:
-      return planeta;
-    }
+  const removeFilters = ({ target: { id } }) => {
+    setConcatFilters(concatFilters.filter((fil) => fil.column !== id));
+    setColumnSelect([...columnSelect, id]);
   };
 
-  const handleConcat = () => {
-    let newArrayPlanet = [];
-    newArrayPlanet = filterConcat(planetList, column, comparison, valueF);
-    setPlanetList(newArrayPlanet);
+  const removeAllFilters = () => {
+    setConcatFilters([]);
+    setColumnSelect([
+      'population',
+      'orbital_period',
+      'diameter',
+      'rotation_period',
+      'surface_water',
+    ]);
+  };
+
+  useEffect(() => {
+    if (!concatFilters.length) return setPlanetList(planetListOrigin);
+    let filtered = planetListOrigin;
+    concatFilters.forEach((filter) => {
+      const { column, comparison, valueF } = filter;
+      if (comparison === 'maior que') {
+        filtered = filtered.filter((a) => Number(a[column]) > Number(valueF));
+      } if (comparison === 'menor que') {
+        filtered = filtered.filter((a) => Number(a[column]) < Number(valueF));
+      } if (comparison === 'igual a') {
+        filtered = filtered.filter((a) => Number(a[column]) === Number(valueF));
+      }
+      setPlanetList(filtered);
+    });
+  }, [concatFilters]);
+
+  const filter = () => {
+    setConcatFilters([...concatFilters, filterByNumericValues]);
+    setColumnSelect(columnSelect
+      .filter((option) => option !== filterByNumericValues.column));
+    setFilterByNumericValues({
+      column: columnSelect[0],
+      comparison: 'maior que',
+      valueF: 0,
+    });
   };
 
   return (
@@ -50,52 +74,63 @@ function Filter() {
         <select
           id="column-filter"
           data-testid="column-filter"
-          name="column-filter"
-          value={ column }
-          onChange={ handleChangeColumn }
+          name="column"
+          value={ filterByNumericValues.column }
+          onChange={ handleChangeAll }
         >
-          {options.map((option) => (
+          {columnSelect.map((option) => (
             <option value={ option } key={ option }>
               {option}
             </option>
           ))}
         </select>
       </label>
-      {/* <button type="button" onClick={ removeFilters }>X</button> */}
       <label htmlFor="comparison-filter">
         Comparison Filter:
         <select
           id="comparison-filter"
           data-testid="comparison-filter"
-          name="comparison-filter"
-          value={ comparison }
-          onChange={ handleChangeComparison }
+          name="comparison"
+          value={ filterByNumericValues.comparison }
+          onChange={ handleChangeAll }
         >
           <option value="maior que">maior que</option>
           <option value="menor que">menor que</option>
           <option value="igual a">igual a</option>
         </select>
       </label>
-      {/* <button type="button" onClick={ removeFilters }>X</button> */}
       <label htmlFor="value-filter">
         Value filter:
         <input
+          name="valueF"
           id="value-filter"
           data-testid="value-filter"
           type="number"
-          value={ valueF }
-          min="0"
-          onChange={ handleChangeValue }
+          value={ filterByNumericValues.valueF }
+          onChange={ handleChangeAll }
         />
       </label>
-      {/* <button type="button" onClick={ removeFilters }>X</button> */}
       <button
         id="button-filter"
         type="button"
         data-testid="button-filter"
-        onClick={ handleConcat }
+        onClick={ filter }
       >
-        Filter:
+        Filter
+      </button>
+      {concatFilters.length > 0 && concatFilters.map(({ column, comparison, valueF }) => (
+        <div data-testid="filter" key={ column }>
+          <span>{ `${column} ${comparison} ${valueF}` }</span>
+          <button type="button" id={ column } onClick={ removeFilters }>X</button>
+        </div>
+      ))}
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ removeAllFilters }
+      >
+        Remover todos
+
       </button>
     </main>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 function useFetchApi() {
   const [planetList, setPlanetList] = useState([]);
+  const [planetListOrigin, setPlanetListOrigin] = useState([]);
 
   useEffect(() => {
     const getPlanets = async () => {
@@ -11,6 +12,7 @@ function useFetchApi() {
         const { results } = await response.json();
         const filteredResults = results.filter((item) => delete item.residents);
         setPlanetList(filteredResults);
+        setPlanetListOrigin(filteredResults);
       } catch (error) {
         console.log('API endpoint not found');
       }
@@ -18,7 +20,7 @@ function useFetchApi() {
     getPlanets();
   }, []);
 
-  return { planetList, setPlanetList };
+  return { planetList, setPlanetList, planetListOrigin };
 }
 
 export default useFetchApi;
