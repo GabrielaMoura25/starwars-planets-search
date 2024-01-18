@@ -8,7 +8,7 @@ A aplicação StarWars Search Planets foi desenvolvida para funcionar como uma p
 
 ### Tecnologias e Ferramentas
 
-Neste projeto foi utilizado a biblioteca [React](https://pt-br.reactjs.org/) onde se trabalhou a ideia de ciclo de vida de componentes. Para gerenciamento do estado da paplicação foi utilizado o React Hooks. Para alinhar o código com as boas práticas de desenvolvimento foram utilizadas as ferramentas [ESLint](https://github.com/eslint/eslint) e [StyleLint](https://stylelint.io/). 
+Neste projeto foi utilizado a biblioteca [React](https://pt-br.reactjs.org/) onde se trabalhou a ideia de ciclo de vida de componentes. Para gerenciamento do estado da aplicação foi utilizado o React Hooks. Para alinhar o código com as boas práticas de desenvolvimento foram utilizadas as ferramentas [ESLint](https://github.com/eslint/eslint) e [StyleLint](https://stylelint.io/). 
 
 Os testes da aplicação foram desenvolvidos utilizando a [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) aliada a ferramenta [Jest](https://jestjs.io/).
 
